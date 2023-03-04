@@ -79,11 +79,7 @@ fn main() {
         } => {
             build_target = target;
 
-            if unit {
-                command = "test";
-                build_args = vec!["--lib"];
-                features.push("test-unit");
-            } else if tarpaulin {
+            if unit || tarpaulin {
                 command = "test";
                 build_args = vec!["--lib"];
                 features.push("test-unit");

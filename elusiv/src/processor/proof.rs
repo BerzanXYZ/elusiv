@@ -36,9 +36,7 @@ use solana_program::program_error::ProgramError;
 use solana_program::pubkey::Pubkey;
 use solana_program::system_instruction;
 use solana_program::sysvar::instructions;
-use solana_program::{
-    account_info::AccountInfo, clock::Clock, entrypoint::ProgramResult, sysvar::Sysvar,
-};
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult};
 use std::collections::HashSet;
 
 #[derive(
@@ -140,15 +138,6 @@ pub fn init_verification<'a, 'b, 'c, 'd>(
                 public_inputs.verify_additional_constraints(),
                 ElusivError::InvalidPublicInputs
             );
-
-            if !cfg!(test) {
-                let clock = Clock::get()?;
-                let current_timestamp: u64 = clock.unix_timestamp.try_into().unwrap();
-                guard!(
-                    is_timestamp_valid(public_inputs.current_time, current_timestamp),
-                    ElusivError::InvalidInstructionData
-                );
-            }
 
             &public_inputs.join_split
         }
@@ -459,7 +448,6 @@ pub fn compute_verification(
 
 #[derive(BorshDeserialize, BorshSerialize, Clone, Default)]
 pub struct FinalizeSendData {
-    pub timestamp: u64,
     pub total_amount: u64,
     pub token_id: u16,
 
@@ -572,10 +560,6 @@ pub fn finalize_verification_send<'a>(
         storage_account.get_trees_count(),
         storage_account.get_next_commitment_ptr(),
         CommitmentQueue::new(commitment_hash_queue).len(),
-    );
-    guard!(
-        data.timestamp == public_inputs.current_time,
-        ElusivError::InputsMismatch
     );
     guard!(
         data.total_amount == public_inputs.join_split.total_amount(),
@@ -1433,7 +1417,6 @@ mod tests {
             },
             recipient_is_associated_token_account: true,
             hashed_inputs: u256_from_str_skip_mr("1"),
-            current_time: 0,
             solana_pay_transfer: false,
         };
         compute_fee_rec_lamports::<SendQuadraVKey, _>(&mut inputs, &fee());
@@ -1727,7 +1710,6 @@ mod tests {
             },
             recipient_is_associated_token_account: true,
             hashed_inputs: u256_from_str_skip_mr("1"),
-            current_time: 0,
             solana_pay_transfer: false,
         };
         compute_fee_rec_lamports::<SendQuadraVKey, _>(&mut inputs, &fee());
@@ -1792,7 +1774,6 @@ mod tests {
             },
             recipient_is_associated_token_account: false,
             hashed_inputs: u256_from_str_skip_mr("1"),
-            current_time: 0,
             solana_pay_transfer: false,
         };
         compute_fee_rec_lamports::<SendQuadraVKey, _>(&mut inputs, &fee());
@@ -2042,7 +2023,6 @@ mod tests {
             },
             recipient_is_associated_token_account: false,
             hashed_inputs: u256_from_str_skip_mr("1"),
-            current_time: 0,
             solana_pay_transfer: false,
         };
         compute_fee_rec::<SendQuadraVKey, _>(&mut inputs, &fee(), &price);
@@ -2440,7 +2420,6 @@ mod tests {
                     false,
                     &None,
                 ),
-                current_time: 1234567,
                 solana_pay_transfer: false,
             };
 
@@ -2468,7 +2447,6 @@ mod tests {
             });
 
             let $finalize_data = FinalizeSendData {
-                timestamp: $public_inputs.current_time,
                 total_amount: $public_inputs.join_split.total_amount(),
                 token_id: $token_id,
                 mt_index: 0,
@@ -2592,7 +2570,6 @@ mod tests {
 
         // Invalid finalize_data
         for invalid_data in [
-            mutate(&finalize_data, |d| d.timestamp = 0),
             mutate(&finalize_data, |d| {
                 d.total_amount = public_inputs.join_split.amount
             }),

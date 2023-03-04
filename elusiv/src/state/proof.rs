@@ -352,7 +352,6 @@ mod tests {
                 token_id: 0,
             },
             hashed_inputs: u256_from_str_skip_mr("7777777"),
-            current_time: 0,
             recipient_is_associated_token_account: true,
             solana_pay_transfer: false,
         };

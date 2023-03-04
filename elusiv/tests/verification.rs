@@ -115,7 +115,6 @@ fn send_request(index: usize) -> FullSendRequest {
                     token_id: 0,
                 },
                 recipient_is_associated_token_account: false,
-                current_time: 0,
                 hashed_inputs: default_hashed_inputs,
                 solana_pay_transfer: false,
             }
@@ -141,7 +140,6 @@ fn send_request(index: usize) -> FullSendRequest {
                     token_id: 0,
                 },
                 recipient_is_associated_token_account: false,
-                current_time: 0,
                 hashed_inputs: default_hashed_inputs,
                 solana_pay_transfer: false,
             }
@@ -167,7 +165,6 @@ fn send_request(index: usize) -> FullSendRequest {
                     token_id: 0,
                 },
                 recipient_is_associated_token_account: false,
-                current_time: 0,
                 hashed_inputs: default_hashed_inputs,
                 solana_pay_transfer: false,
             }
@@ -197,7 +194,6 @@ fn send_request(index: usize) -> FullSendRequest {
                     token_id: 0,
                 },
                 recipient_is_associated_token_account: false,
-                current_time: 0,
                 hashed_inputs: default_hashed_inputs,
                 solana_pay_transfer: false,
             }
@@ -1427,7 +1423,6 @@ async fn test_finalize_proof_commitment_index() {
             ElusivInstruction::finalize_verification_send_instruction(
                 0,
                 FinalizeSendData {
-                    timestamp: 0,
                     total_amount: request.public_inputs.join_split.total_amount(),
                     token_id: 0,
                     mt_index: 0,
@@ -1606,7 +1601,6 @@ async fn test_associated_token_account() {
             ElusivInstruction::finalize_verification_send_instruction(
                 0,
                 FinalizeSendData {
-                    timestamp: request.public_inputs.current_time,
                     total_amount: request.public_inputs.join_split.total_amount(),
                     token_id: USDC_TOKEN_ID,
                     encrypted_owner: extra_data.encrypted_owner,
@@ -1998,7 +1992,6 @@ async fn nullifier_finalization_test(number_of_start_nullifiers: u64, input_comm
             token_id: 0,
         },
         recipient_is_associated_token_account: false,
-        current_time: 0,
         hashed_inputs: extra_data.hash(),
         solana_pay_transfer: false,
     };

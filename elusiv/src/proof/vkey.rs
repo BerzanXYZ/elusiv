@@ -66,7 +66,7 @@ macro_rules! verification_key_info {
     };
 }
 
-verification_key_info!(SendQuadraVKey, 0, 14, "send_quadra");
+verification_key_info!(SendQuadraVKey, 0, 13, "send_quadra");
 verification_key_info!(MigrateUnaryVKey, 1, 7, "migrate_unary");
 
 #[cfg(test)]

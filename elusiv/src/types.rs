@@ -373,7 +373,6 @@ pub trait PublicInputs {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct SendPublicInputs {
     pub join_split: JoinSplitPublicInputs,
-    pub current_time: u64,
     pub recipient_is_associated_token_account: bool,
     pub solana_pay_transfer: bool,
     pub hashed_inputs: U256,
@@ -469,7 +468,6 @@ impl PublicInputs for SendPublicInputs {
 
         public_signals.extend(vec![
             RawU256(u64_to_u256_skip_mr(self.join_split.total_amount())),
-            RawU256(u64_to_u256_skip_mr(self.current_time)),
             self.join_split.output_commitment,
             RawU256(u64_to_u256_skip_mr(self.join_split.fee_version as u64)),
             RawU256(u64_to_u256_skip_mr(self.join_split.token_id as u64)),
@@ -714,7 +712,6 @@ mod test {
                 fee: 0,
                 token_id: 0,
             },
-            current_time: 0,
             hashed_inputs: [0; 32],
             recipient_is_associated_token_account: true,
             solana_pay_transfer: false,
@@ -757,7 +754,6 @@ mod test {
                 fee: 1,
                 token_id: 3,
             },
-            current_time: 1657927306,
             hashed_inputs: u256_from_str_skip_mr("306186522190603117929438292402982536627"),
             recipient_is_associated_token_account: true,
             solana_pay_transfer: false,
